@@ -1,0 +1,27 @@
+1. Incident commander name:
+
+Monero crypto mining container
+
+2. Executive Summary of what happened:
+
+The CPU utilization doubled from an average of 34% to about 70%, and some abnormalities were detected on the falco-exporter where the mount launched in a priviledged container and the event rate had multiple spikes of high proportions.
+
+3. Summary of what was affected:
+
+Unexpected spike in resource usage which led to an increase in latency of the cluster response, and the system resources were being utilized by illegal actors thereby bringing about timeouts.
+
+4. Summmry of the impact:
+
+The crypto-miner was consuming a huge amount of CPU thereby slowly bringing the system to a halt, and suspicious services running in the cluster fighting for system resource with legitimate services.
+
+5. Summary of the remediation steps:
+
+- Harden cluster using baseline hardening at least
+- Perform a vulnerability scan of the libraries and docker images in use using static and dynamic analysis, and resolve any vulnerabilities discovered
+- Immediate removal of suspicious or unrecognized services within the cluster/node.
+
+6. Summary of lessons learned:
+
+Carrying out process monitoring at runtime is vital to detect suspicious processes running in a pod within the Kubernetes cluster, and allows for real-time threat detection. Putting a tool like Falco to use provides alerts on a variety of security events such as priviledge escalation, namesapce changes and execution of sensitive services/utilties.
+
+It is good practice to harden the different components within a kubernetes cluster (control plane, etcd, kubelet etc), as the default kubernetes installation is so secure.
