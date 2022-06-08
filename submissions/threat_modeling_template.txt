@@ -1,0 +1,37 @@
+Docker Threat Modeling
+
+Given Docker's system components and the STRIDE framework, five potential threats that may arise are:
+
+1. Spoofing: A malicious image or package can be added to the registry by a user with malicious intent leading to a compromised image.
+2. Tampering: If auditing is not properly configured for the Docker daemon or Docker files and directories, the system can be exploited by a bad actor.
+3. Information Disclosure: Unrestricted network traffic is allowed between containers on the same host using the default network bridge, which implies that a container has the potential of reading other container packets on the same host. This may lead to private or sensitive information disclosure to other containers. A way around this is to restrict inter-container communication on the default network bridge.
+4. Denial of Service: No memory limit is set by default on docker images, which can lead to all available memory on the host being used up, thereby impacting availability. You can prevent such DOS attack by placing a limit on memory usage by containers.
+5. Elevation of Privilege: Network traffic spoofing can allow an attacker to gain unwanted access to the host and containers. To prevent undesired esclations, care should be taken when installing unsigned packages or images.
+
+
+
+Kubernetes Threat Modeling
+
+
+Given Kubernetes' system components and the STRIDE framework, five potential threats that may arise are:
+
+1. Spoofing: Public exposure of the Kube API server can serve as an entry point for attackers thereby allowing them to spoof or take over the cluster. A TLS tunnel can be put in place to restrict such access.
+2. Tampering: If appropriate permissions are not put in place on the etcd configuration, it can easily be compromised for malicious intent.
+3. Repudiation: If appropriate security policies are not put in place and cluster is compromised, unauthorized changes can be made to the system kubelet. To prevent this, TLS can be enabled to prevent unauthorized access/changes.
+4. Denial of Service: No memory limit is set by default by Kubenetes, which can lead to all available memory on the host being used up, thereby impacting availability. 
+5. Information Disclosure: Sensitive information like keys or secrets stored in etcd should be encrypted to prevent leakage. Also, sensitive information should not be stored in logs.
+
+
+Docker-bench Run Results and Analysis
+
+Documented below are 3 findings from the Docker-bench results that will be hardened for the fulfillment of this project based on the 5 attack surface areas  identified in Step 1:
+
+
+[FAIL] 1.1.3 Ensure auditing is configured for the docker daemon (Automated)
+Remediation: Add -w /usr/bin/dockerd -k docker to the /etc/audit/audit.rules file and then restart the audit daemon using systemctl restart auditd
+
+[FAIL] 1.1.4 Ensure auditing is configured for Docker files and directories - /run/containerd (Automated)
+Remediation: Add `-a exit,always -F path=/run/containerd -F perm=war -k docker` to the /etc/audit/audit.rules file and then restart the audit daemon using `systemctl restart auditd`
+
+[FAIL] 1.1.8 Ensure auditing is configured for Docker files and directories - containerd.sock (Automated)
+Remediation: Add `-w /run/containerd/containerd.sock -k docker` to the /etc/audit/audit.rules file and then restart the audit daemon using `systemctl restart auditd`
