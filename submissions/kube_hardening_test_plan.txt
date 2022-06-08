@@ -1,0 +1,7 @@
+How will you test the changes?
+
+The change will be tested in a non-production environment such as a test or staging cluster that mimics the configuration inverbatim. Changes to the cluster manifest will be version-controlled with Git so that the change can be easily rolled back
+
+How will you ensure the changes don't negatively affect your cluster?
+
+The change will be carried out in a non-production cluster whose metrics will be monitored using observability and monitoring techniques like Prometheus and Grafana. Incoming traffic will be directed to the test or staging environment via a load balancer. 
